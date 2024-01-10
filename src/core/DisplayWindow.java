@@ -1,26 +1,21 @@
 package core;
 
-import Interfaces.Drawable;
-import Interfaces.Interactive;
-import Interfaces.PixelFilter;
+import interfaces.Drawable;
+import interfaces.Interactive;
+import interfaces.PixelFilter;
 import com.github.sarxos.webcam.Webcam;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.video.Movie;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-/**
- * Display class for working with image filters
- * by David Dobervich
- */
 public class DisplayWindow extends PApplet {
     private static final int WEBCAM = 1;
     private static final int IMAGE = 2;
-    private static final int VIDEO = 3;     // TODO: remove this mode or fix gstreamer library?
+    private static final int VIDEO = 3;
 
     private Webcam webcam;
     private Movie movie;
@@ -28,7 +23,9 @@ public class DisplayWindow extends PApplet {
 
     private boolean currentlyViewingFilteredImage = false;
     private int source;
-    private DImage frame, filteredFrame, oldFilteredFrame, currentDisplayFrame;
+    private DImage frame;
+    private DImage filteredFrame;
+    private DImage oldFilteredFrame;
     private boolean loading = false;
 
     private int centerX, centerY;
@@ -150,14 +147,14 @@ public class DisplayWindow extends PApplet {
             webcam = Webcam.getDefault();
 
             Dimension[] views = webcam.getViewSizes();
-            webcam.setViewSize(views[views.length - 1]);  // set view size to largest supported
+            webcam.setViewSize(views[views.length - 1]);
 
             this.displayHeight = (int) (webcam.getViewSize().getHeight());
             this.displayWidth = (int) (webcam.getViewSize().getWidth());
             webcam.open();
         }
 
-        initiallyPaused = (source == IMAGE);    // initially pause if it's an image
+        initiallyPaused = (source == IMAGE);
     }
 
     public void draw() {
@@ -177,7 +174,7 @@ public class DisplayWindow extends PApplet {
         if (oldFilteredFrame == null) oldFilteredFrame = frame;
 
         DImage currentFiltered = (!loading && filteredFrame != null) ? filteredFrame : oldFilteredFrame;
-        currentDisplayFrame = (!currentlyViewingFilteredImage) ? frame : filteredFrame;
+        DImage currentDisplayFrame = (!currentlyViewingFilteredImage) ? frame : filteredFrame;
 
         if (!currentlyViewingFilteredImage) {
             drawFrame(frame, frame, currentFiltered, centerX - frame.getWidth() / 2, centerY - frame.getHeight() / 2);
@@ -214,7 +211,7 @@ public class DisplayWindow extends PApplet {
         line(0, mouseY, width, mouseY);
         line(mouseX, 0, mouseX, height);
 
-        if (filter != null && initiallyPaused) {          // hack hack!  display one frame, then pause
+        if (filter != null && initiallyPaused) {
             initiallyPaused = false;
             paused = true;
         }
@@ -291,14 +288,11 @@ public class DisplayWindow extends PApplet {
         if (key == 'f' || key == 'F') {
             this.filter = loadNewFilter();
         }
-
         if (key == 's' || key == 'S') {
             currentlyViewingFilteredImage = !currentlyViewingFilteredImage;
         }
-
         if (key == 'p' || key == 'P') {
             paused = !paused;
-
             if (source != WEBCAM && movie != null) {
                 if (paused) {
                     movie.pause();
@@ -307,7 +301,6 @@ public class DisplayWindow extends PApplet {
                 }
             }
         }
-
         if (frame != null && (filter instanceof Interactive)) {
             ((Interactive) filter).keyPressed(key);
         }
@@ -315,8 +308,6 @@ public class DisplayWindow extends PApplet {
 
     public void mouseReleased() {
         if (this.filter != null && this.filter instanceof Interactive) {
-            // TODO: should we provide the original frame or the filtered frame?  both?
-            //           ((Interactive) filter).mouseClicked(getImageMouseX(currentDisplayFrame), getImageMouseY(currentDisplayFrame), currentDisplayFrame);
             if (frame != null) {
                 ((Interactive) filter).mouseClicked(getImageMouseX(frame), getImageMouseY(frame), frame);
             }
@@ -324,14 +315,14 @@ public class DisplayWindow extends PApplet {
     }
 
     private PixelFilter loadNewFilter() {
-        String name = JOptionPane.showInputDialog("Type the name of your processImage class (without the .java)");
+        String name = JOptionPane.showInputDialog("type the name of your processImage class (without the .java)");
         PixelFilter f = null;
         try {
-            Class c = Class.forName("Filters." + name);
+            Class c = Class.forName("filters." + name);
             f = (PixelFilter) c.newInstance();
         } catch (Exception e) {
-            System.err.println("Something went wrong when instantiating your class!  (running its constructor). " +
-                    "Double-check you typed the name correctly.  Double-check you have a constructor that takes " +
+            System.err.println("something went wrong when instantiating your class! (running its constructor). " +
+                    "double check you typed the name correctly. double check you have a constructor that takes " +
                     "no inputs!");
             System.err.println(e.getMessage());
         }
@@ -355,4 +346,3 @@ public class DisplayWindow extends PApplet {
         PApplet.main("core.DisplayWindow", new String[]{"dimensions:" + width + "x" + height});
     }
 }
-

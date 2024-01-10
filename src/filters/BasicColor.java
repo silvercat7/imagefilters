@@ -1,9 +1,9 @@
-package Filters;
+package filters;
 
-import Interfaces.PixelFilter;
+import interfaces.PixelFilter;
 import core.DImage;
 
-public class BasicColorFilter implements PixelFilter {
+public class BasicColor implements PixelFilter {
 
 
     @Override
