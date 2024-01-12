@@ -2,7 +2,7 @@ import core.DisplayWindow;
 
 public class Test {
     public static void main(String[] args) {
-        DisplayWindow.showFor("images/6.jpg", 800, 600);
-        //DisplayWindow.getInputInteractively(800,600);
+        DisplayWindow.showFor("images/6.jpg", 1000, 800);
+        //DisplayWindow.getInputInteractively(1000,800);
     }
 }

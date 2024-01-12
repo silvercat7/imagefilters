@@ -23,20 +23,14 @@ public class AddBorder implements PixelFilter {
         for (int row = 0; row < filtered.length; row++) {
             for (int col = 0; col < filtered[0].length; col++) {
                 filtered[row][col] = borderColor;
-                if (col >= borderWidth) {
-                    col += image[0].length;
-                }
-            }
-            if (row >= borderWidth) {
-                row += image.length;
             }
         }
-        for (int row = borderWidth; row < image.length; row++) {
-            for (int col = borderWidth; col < image[row].length; col++) {
+        for (int row = borderWidth + 1; row < filtered.length - borderWidth - 1; row++) {
+            for (int col = borderWidth + 1; col < filtered[0].length - borderWidth - 1; col++) {
                 filtered[row][col] = image[row - borderWidth][col - borderWidth];
             }
         }
-        img.setPixels(image);
+        img.setPixels(filtered);
         return img;
     }
 }
