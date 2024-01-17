@@ -9,8 +9,7 @@ public class Lighten implements PixelFilter {
 
     public Lighten() {
         String response = JOptionPane.showInputDialog("enter a percentage");
-        double n = Double.parseDouble(response);
-        percentage = n;
+        percentage = Double.parseDouble(response);
     }
 
     @Override

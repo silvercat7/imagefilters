@@ -9,21 +9,18 @@ public class DownSampling implements PixelFilter {
     private final int divisor;
 
     public DownSampling() {
-        divisor = 2;
+        String response = JOptionPane.showInputDialog("enter a divisor");
+        divisor = Integer.parseInt(response);
     }
 
     @Override
     public DImage processImage(DImage img) {
         short[][] image = img.getBWPixelGrid();
         short[][] filtered = new short[image.length/divisor][image[0].length/divisor];
-        int rowCounter = 0;
-        int colCounter = 0;
         for (int row = 0; row < filtered.length; row++) {
             for (int col = 0; col < filtered[0].length; col++) {
-                filtered[row][col] = getAverage(row + (divisor * rowCounter), col + (divisor + colCounter), image);
-                colCounter++;
+                filtered[row][col] = getAverage(row * divisor, col * divisor, image);
             }
-            rowCounter++;
         }
         img.setPixels(filtered);
         return img;
