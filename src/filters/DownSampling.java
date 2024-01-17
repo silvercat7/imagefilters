@@ -9,9 +9,6 @@ public class DownSampling implements PixelFilter {
     private final int divisor;
 
     public DownSampling() {
-        /*String response = JOptionPane.showInputDialog("enter a divisor");
-        int n = Integer.parseInt(response);
-         */
         divisor = 2;
     }
 
@@ -22,11 +19,11 @@ public class DownSampling implements PixelFilter {
         int rowCounter = 0;
         int colCounter = 0;
         for (int row = 0; row < filtered.length; row++) {
-            rowCounter++;
             for (int col = 0; col < filtered[0].length; col++) {
-                colCounter++;
                 filtered[row][col] = getAverage(row + (divisor * rowCounter), col + (divisor + colCounter), image);
+                colCounter++;
             }
+            rowCounter++;
         }
         img.setPixels(filtered);
         return img;
