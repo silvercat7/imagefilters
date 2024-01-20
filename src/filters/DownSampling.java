@@ -9,8 +9,7 @@ public class DownSampling implements PixelFilter {
     private final int divisor;
 
     public DownSampling() {
-        String response = JOptionPane.showInputDialog("enter a divisor");
-        divisor = Integer.parseInt(response);
+        divisor = Integer.parseInt(JOptionPane.showInputDialog("enter a divisor"));
     }
 
     @Override
