@@ -9,8 +9,7 @@ public class ColorNoise implements PixelFilter {
     private double probability;
 
     public ColorNoise() {
-        String response = JOptionPane.showInputDialog("choose a noise probability");
-        probability = Double.parseDouble(response);
+        probability = Double.parseDouble(JOptionPane.showInputDialog("choose a noise probability"));
     }
 
     @Override

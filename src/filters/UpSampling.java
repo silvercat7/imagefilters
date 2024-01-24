@@ -9,8 +9,7 @@ public class UpSampling implements PixelFilter {
     private final int multiplier;
 
     public UpSampling() {
-        String response = JOptionPane.showInputDialog("enter a divisor");
-        multiplier = Integer.parseInt(response);
+        multiplier = Integer.parseInt(JOptionPane.showInputDialog("enter a multiplier"));
     }
 
     @Override
@@ -20,7 +19,7 @@ public class UpSampling implements PixelFilter {
         for (int row = 0; row < filtered.length; row++) {
             for (int col = 0; col < filtered[0].length; col++) {
                 if (filtered[row][col] == 0) {
-                    filtered[row][col] = getAverage(row, col, image);
+                    filtered[row][col] = getAverage(row/multiplier, col/multiplier, image);
                 }
             }
         }
@@ -32,7 +31,7 @@ public class UpSampling implements PixelFilter {
         short[][] filtered = new short[image.length * multiplier][image[0].length * multiplier];
         for (int row = 0; row < image.length; row++) {
             for (int col = 0; col < image[0].length; col++) {
-                filtered[row * 2][col * 2] = image[row][col];
+                filtered[row * multiplier][col * multiplier] = image[row][col];
             }
         }
         return filtered;

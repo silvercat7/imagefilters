@@ -10,10 +10,8 @@ public class AddBorder implements PixelFilter {
     private final short borderColor;
 
     public AddBorder() {
-        String width = JOptionPane.showInputDialog("choose a border width");
-        borderWidth = Integer.parseInt(width);
-        String color = JOptionPane.showInputDialog("choose a border color");
-        borderColor = Short.parseShort(color);
+        borderWidth = Integer.parseInt(JOptionPane.showInputDialog("choose a border width"));
+        borderColor = Short.parseShort(JOptionPane.showInputDialog("choose a border color"));
     }
 
     @Override
