@@ -19,11 +19,14 @@ public class ColorReduction implements PixelFilter {
         short[][] green = img.getGreenChannel();
         short[][] blue = img.getBlueChannel();
         ArrayList<Cluster> clusters = initializeClusters();
-        ArrayList<Point> points = initializePoints(red, green, blue);
-        for (int i = 0; i < 10; i++) {
+        ArrayList<Point> allPoints = initializePoints(red, green, blue);
+        int counter = 0;
+        while (counter < 10) {
             clearPoints(clusters);
-            assignPoints(clusters, points);
-            calculateCenters(clusters);
+            assignPoints(clusters, allPoints);
+            if (!moveCenters(clusters)) {
+                counter++;
+            }
         }
         ArrayList<short[][]> rgb = reduceColors(clusters, red, green, blue);
         img.setColorChannels(rgb.get(0), rgb.get(1), rgb.get(2));
@@ -57,8 +60,8 @@ public class ColorReduction implements PixelFilter {
         }
     }
 
-    public void assignPoints(ArrayList<Cluster> clusters, ArrayList<Point> points) {
-        for (Point p : points) {
+    public void assignPoints(ArrayList<Cluster> clusters, ArrayList<Point> allPoints) {
+        for (Point p : allPoints) {
             findClosest(p, clusters).addPoint(p);
         }
     }
@@ -76,17 +79,23 @@ public class ColorReduction implements PixelFilter {
         return closest;
     }
 
-    public void calculateCenters(ArrayList<Cluster> clusters) {
+    public boolean moveCenters(ArrayList<Cluster> clusters) {
+        int counter = 0;
         for (Cluster c : clusters) {
             short red = getAverage(c, "red");
             short green = getAverage(c, "green");
             short blue = getAverage(c, "blue");
+            if (c.getCenter().getRed() == red && c.getCenter().getGreen() == green && c.getCenter().getBlue() == blue) {
+                counter++;
+            }
             c.moveCenter(red, green, blue);
         }
+        System.out.println(counter);
+        return counter != clusters.size();
     }
 
     public short getAverage(Cluster c, String color) {
-        short total = 0;
+        double total = 0.0;
         ArrayList<Point> points = c.getPoints();
         for (Point p : points) {
             total += getColor(p, color);

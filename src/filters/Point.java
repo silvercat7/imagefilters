@@ -3,9 +3,9 @@ package filters;
 public class Point {
     private int row;
     private int col;
-    private short red;
-    private short green;
-    private short blue;
+    private final short red;
+    private final short green;
+    private final short blue;
 
     public Point(short r, short g, short b) {
         red = r;
