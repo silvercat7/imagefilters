@@ -35,29 +35,31 @@ public class Convolution implements PixelFilter {
         } else if (response.equals("edge detection")) {
             kernel = new double[][]{{-1, -1, -1}, {-1, 8, -1}, {-1, -1, -1}};
             kernelWeight = 0;
+        } else if (response.equals("emboss")) {
+            kernel = new double[][]{{4, 0, 0}, {0, 0, 0}, {0, 0, -4}};
+            kernelWeight = 0;
         }
     }
 
     @Override
     public DImage processImage(DImage img) {
         short[][] red = img.getRedChannel();
-        short[][] green = img.getRedChannel();
-        short[][] blue = img.getRedChannel();
-        img.setColorChannels(convolve(red, kernel), convolve(green, kernel), convolve(blue, kernel));
+        short[][] green = img.getGreenChannel();
+        short[][] blue = img.getBlueChannel();
+        img.setColorChannels(convolve(red), convolve(green), convolve(blue));
         return img;
     }
 
-    public short[][] convolve(short[][] color, double[][] kernel) {
-        short[][] newColor = new short[color.length][color[0].length];
+    public short[][] convolve(short[][] color) {
         for (int row = 0; row < color.length - 2; row++) {
             for (int col = 0; col < color[0].length - 2; col++) {
-                newColor[row][col] = computeOutput(color, kernel, row, col);
+                color[row + 1][col + 1] = computeOutput(color, row, col);
             }
         }
-        return newColor;
+        return color;
     }
 
-    public short computeOutput(short[][] image, double[][] kernel, int startingRow, int startingCol) {
+    public short computeOutput(short[][] image, int startingRow, int startingCol) {
         short output = 0;
         for (int row = startingRow; row <= startingRow + 2; row++) {
             for (int col = startingCol; col <= startingCol + 2; col++) {
