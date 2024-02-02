@@ -51,20 +51,22 @@ public class Convolution implements PixelFilter {
     }
 
     public short[][] convolve(short[][] color) {
+        short[][] newColor = new short[color.length][color[0].length];
         for (int row = 0; row < color.length - 2; row++) {
-            for (int col = 0; col < color[0].length - 2; col++) {
-                color[row + 1][col + 1] = computeOutput(color, row, col);
+            for (int col = 0; col < color[row].length - 2; col++) {
+                newColor[row + 1][col + 1] = computeOutput(color, row, col);
             }
         }
-        return color;
+        fillBorder(color, newColor);
+        return newColor;
     }
 
     public short computeOutput(short[][] image, int startingRow, int startingCol) {
         short output = 0;
-        for (int row = startingRow; row <= startingRow + 2; row++) {
-            for (int col = startingCol; col <= startingCol + 2; col++) {
-                double weight = kernel[row - startingRow][col - startingCol];
-                short pixel = image[row][col];
+        for (int row = 0; row <= 2; row++) {
+            for (int col = 0; col <= 2; col++) {
+                double weight = kernel[row][col];
+                short pixel = image[startingRow + row][startingCol + col];
                 output += (pixel * weight);
             }
         }
@@ -77,5 +79,16 @@ public class Convolution implements PixelFilter {
             output = 255;
         }
         return output;
+    }
+
+    public void fillBorder(short[][] color, short[][] newColor) {
+        for (int col = 0; col < color[0].length; col++) {
+            newColor[0][col] = color[0][col];
+            newColor[color.length - 1][col] = color[color.length - 1][col];
+        }
+        for (int row = 0; row < color.length; row++) {
+            newColor[row][0] = color[row][0];
+            newColor[row][color[row].length - 1] = color[row][color[row].length - 1];
+        }
     }
 }
