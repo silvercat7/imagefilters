@@ -89,6 +89,7 @@ public class Convolution implements PixelFilter {
         return output;
     }
 
+    //fancy output doesn't actually work :(
     public short computeFancyOutput(short[][] image, int startingRow, int startingCol) {
         short output = threshold(sobelEdge(image, startingRow, startingCol));
         for (int i = 0; i < 4; i++) {
@@ -116,13 +117,19 @@ public class Convolution implements PixelFilter {
 
     public short thin(short[][] image, int startingRow, int startingCol) {
         short output = 0;
-        kernel = new double[][] {{0, 0, 0}, {-1, 255, -1}, {255, 255, 255}};
-        if (doesNotMatch(image, startingRow, startingCol)) {
-            output = 255;
-        }
-        kernel = new double[][] {{-1, 0, 0}, {255, 255, 0}, {-1, 255, -1}};
-        if (doesNotMatch(image, startingRow, startingCol)) {
-            output = 255;
+        double[][] first = {{0, 0, 0}, {-1, 255, -1}, {255, 255, 255}};
+        double[][] second = new double[][] {{-1, 0, 0}, {255, 255, 0}, {-1, 255, -1}};
+        for (int i = 0; i < 4; i++) {
+            kernel = first;
+            if (doesNotMatch(image, startingRow, startingCol)) {
+                output = 255;
+            }
+            first = rotateKernel();
+            kernel = second;
+            if (doesNotMatch(image, startingRow, startingCol)) {
+                output = 255;
+            }
+            second = rotateKernel();
         }
         return output;
     }
